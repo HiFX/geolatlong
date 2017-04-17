@@ -9,8 +9,7 @@ import com.hifx.mapper.cache.NoCache;
 import com.hifx.mapper.data.Location;
 import org.simpleflatmapper.csv.CsvParser;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,33 +25,34 @@ public class GeoReader {
     private Map<String, List<Location>> cities = new HashMap<String, List<Location>>();
 
     private GeoReader(Builder builder) throws IOException {
-        this(builder.mapFile, builder.cache, builder.calculator);
+        this(builder.buffReader, builder.cache, builder.calculator);
     }
 
     /**
      * Constructs a GeoReader for the latlog to city map
      *
-     * @param mapFile the lat+long to city map
-     * @param cache   backing cache instance
+     * @param buffReader the lat+long to city map
+     * @param cache      backing cache instance
      * @throws IOException if there is an error opening or reading from the file.
      */
-    private GeoReader(File mapFile, ICache cache, DistanceCalculator calculator) throws IOException {
+    private GeoReader(Reader buffReader, ICache cache, DistanceCalculator calculator) throws IOException {
         this.cache = cache;
         this.calculator = calculator;
         CsvParser.separator(',').
             mapTo(Location.class).
             headers("latitude", "longitude", "countryCode", "country", "city").
-            stream(mapFile, (s) -> {
-                s.forEach((city) -> {
-                    String index = DistanceCalculator.getIndex(city.getLatitude(), city.getLongitude());
-                    List<Location> sameIndexCities = cities.get(index);
-                    if (sameIndexCities == null)
-                        sameIndexCities = new ArrayList<>();
-                    sameIndexCities.add(city);
-                    cities.put(index, sameIndexCities);
-                });
-                return null;
-            });
+            stream(buffReader).
+            forEach(this::loadCities);
+
+    }
+
+    private void loadCities(Location loc) {
+        String index = DistanceCalculator.getIndex(loc.getLatitude(), loc.getLongitude());
+        List<Location> sameIndexCities = cities.get(index);
+        if (sameIndexCities == null)
+            sameIndexCities = new ArrayList<>();
+        sameIndexCities.add(loc);
+        cities.put(index, sameIndexCities);
     }
 
     // get fetches the location correspoinding to the latitide and longitude
@@ -75,15 +75,13 @@ public class GeoReader {
                         double resultDistance = calculator.getDistance(latitude, longitude, result.getLatitude(), result.getLongitude());
                         double cityDistance = calculator.getDistance(latitude, longitude, city.getLatitude(), city.getLongitude());
                         if (cityDistance < resultDistance)
-                            //city is closer than earlier result
-                            result = city;
+                            result = city; //city is closer than earlier result
                     }
                 }
             }
         }
         return result;
     }
-
 
 
     /**
@@ -99,24 +97,15 @@ public class GeoReader {
      * </p>
      */
     public static final class Builder {
-        File mapFile;
+        Reader buffReader;
         DistanceCalculator calculator = new Vincenty();
         //default map file
-        String pathName = "data/latlong.cities.csv";
+        String pathName = "/data/latlong.cities.csv";
         ICache cache = new NoCache();
 
-        /**
-         * The file passed to it must be a valid lat+long->city csv file
-         *
-         * @param database the lat+long->city csv file to use.
-         */
-        public Builder(File database) {
-            this.mapFile = database;
-        }
-
         public Builder() {
-            ClassLoader classLoader = getClass().getClassLoader();
-            this.mapFile = new File(classLoader.getResource(pathName).getFile());
+            InputStream in = this.getClass().getResourceAsStream(pathName);
+            this.buffReader = new BufferedReader(new InputStreamReader(in));
         }
 
         /**
