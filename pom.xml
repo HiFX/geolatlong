@@ -4,7 +4,7 @@
 
     <groupId>com.hifx.mapper</groupId>
     <artifactId>geolatlong</artifactId>
-    <version>0.75</version>
+    <version>0.82</version>
     <packaging>jar</packaging>
 
     <name>geolatlong</name>
@@ -87,7 +87,6 @@
                 <configuration>
                     <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
                     <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
-                    <merge>true</merge>
                     <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory> <!-- matches distribution management repository url above -->
                     <branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
                     <includes>

@@ -6,7 +6,7 @@ import java.io.Serializable;
 /**
  * Location class is used to represent a city identified by a lat, long pair
  */
-public class Location implements Serializable {
+public class Location{
 
     private double latitude;
     private double longitude;
@@ -59,5 +59,14 @@ public class Location implements Serializable {
     public void setCity(String city) {
         this.city = city;
     }
+
+    public static Location getUnknown() {
+        Location location = new Location();
+        location.setCity("Unknown");
+        location.setCountry("Unknown");
+        location.setCountryCode("Unknown");
+        return location;
+    }
+
 }
 

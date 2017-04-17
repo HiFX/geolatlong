@@ -33,6 +33,9 @@ public class CHMCache implements ICache {
         Location value = cache.get(key);
         if (value == null) {
             value = load.apply(latitude, longitude);
+            if (value == null) {
+                value = Location.getUnknown();
+            }
             //bounds check is not atomic :(
             if (!cacheFull) {
                 if (cache.size() < capacity) {
