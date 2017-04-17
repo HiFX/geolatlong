@@ -65,6 +65,7 @@ public class GeoReader {
         Location result = null;
         String[] indexes = DistanceCalculator.getIndexesAround(latitude, longitude);
 
+        double resultDistance=99999999.99;
         for (String index : indexes) {
             List<Location> citiesForIndex = cities.get(index);
             if (citiesForIndex != null) {
@@ -72,10 +73,11 @@ public class GeoReader {
                     if (result == null)
                         result = city;
                     else {
-                        double resultDistance = calculator.getDistance(latitude, longitude, result.getLatitude(), result.getLongitude());
                         double cityDistance = calculator.getDistance(latitude, longitude, city.getLatitude(), city.getLongitude());
-                        if (cityDistance < resultDistance)
+                        if (cityDistance < resultDistance){
                             result = city; //city is closer than earlier result
+                            resultDistance = cityDistance;
+                        }
                     }
                 }
             }
