@@ -62,21 +62,26 @@ public class GeoReader {
 
     //lookup performs the lookup on the hashmap for lat+long if there is no cache involved
     public Location lookup(double latitude, double longitude) {
+        if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > -180){
+            return new Location();
+        }
         Location result = null;
-        String[] indexes = DistanceCalculator.getIndexesAround(latitude, longitude);
 
-        double resultDistance=99999999.99;
-        for (String index : indexes) {
-            List<Location> citiesForIndex = cities.get(index);
-            if (citiesForIndex != null) {
-                for (Location city : citiesForIndex) {
-                    if (result == null)
-                        result = city;
-                    else {
-                        double cityDistance = calculator.getDistance(latitude, longitude, city.getLatitude(), city.getLongitude());
-                        if (cityDistance < resultDistance){
-                            result = city; //city is closer than earlier result
-                            resultDistance = cityDistance;
+        for (int levelInd=1;result==null;levelInd++){
+            String[] indexes = DistanceCalculator.getNeighbourIndexes(latitude, longitude,levelInd);
+            double resultDistance=99999999.99;
+            for (String index : indexes) {
+                List<Location> citiesForIndex = cities.get(index);
+                if (citiesForIndex != null) {
+                    for (Location city : citiesForIndex) {
+                        if (result == null)
+                            result = city;
+                        else {
+                            double cityDistance = calculator.getDistance(latitude, longitude, city.getLatitude(), city.getLongitude());
+                            if (cityDistance < resultDistance){
+                                result = city; //city is closer than earlier result
+                                resultDistance = cityDistance;
+                            }
                         }
                     }
                 }
