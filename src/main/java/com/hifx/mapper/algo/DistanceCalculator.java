@@ -37,23 +37,52 @@ public abstract class DistanceCalculator {
         return latStr + ":" + lonStr;
     }
 
-
     /**
-     * getIndexesAround returns an compound index for given location and 8 other squares around it.
+     * getNeighbourIndexes returns all compound index of the neighbour for the given location bases on the level.
+     * level == 1: is special case return centre node and 8 neighbour square.
+     * level > 1: will return all the neighbour nodes those are 'level' distance away from the center node And exclude all the nodes which lies in the 'level' - 1.
      *
-     * @param latitude  of the loc
-     * @param longitude of the loc
+     * @param latitude        of the loc
+     * @param longitude       of the loc
+     * @param level(distance) number of nodes away from the own node. Exclude all the nodes in (level-1) level.
      * @return String[] indexes
      */
 
-    public static String[] getIndexesAround(double latitude, double longitude) {
-        String[] result = new String[9];
+    public static String[] getNeighbourIndexes(double latitude, double longitude, int level) {
+        int innerCubeWidth = 1;
 
-        for (int latInd = -1; latInd <= 1; latInd++)
-            for (int lonInd = -1; lonInd <= 1; lonInd++) {
-                result[(latInd + 1) * 3 + (lonInd + 1)] = getIndex(latitude + ((double) latInd), longitude + ((double) lonInd));
+        //initialize the index array based on the level.
+        String[] result;
+        if (level == 0) {
+            result = new String[1];
+        } else if (level == 1) {
+            //special case: include the center point with the result.
+            result = new String[9];
+            result[8] = getIndex(latitude, longitude);
+        } else if (level > 1) {
+            result = new String[level * 8];
+            innerCubeWidth = 2 * (level - 1) + 1;
+        } else {
+            return null;
+        }
+
+        //assign the neighbour indexes to the result array.
+        int resultInd = 0;
+        int additionalIncr = 0;
+        for (int latInd = (-1 * level); latInd <= level; latInd++) {
+            for (int lonInd = (-1 * level); lonInd <= level; lonInd = lonInd + 1 + additionalIncr) {
+                result[resultInd] = getIndex((int)latitude + latInd, (int)longitude + lonInd);
+                resultInd++;
             }
-
+            if (latInd == (level - 1)) {
+                additionalIncr = 0;
+                //do not skip anything on the last row.
+            } else {
+                //skip the all the index those lies in the inner cube.
+                additionalIncr = innerCubeWidth;
+            }
+        }
         return result;
     }
+
 }
