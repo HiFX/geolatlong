@@ -37,26 +37,6 @@ public abstract class DistanceCalculator {
         return latStr + ":" + lonStr;
     }
 
-
-//    /**
-//     * getIndexesAround returns an compound index for given location and 8 other squares around it.
-//     *
-//     * @param latitude  of the loc
-//     * @param longitude of the loc
-//     * @return String[] indexes
-//     */
-//
-//    public static String[] getIndexesAround(double latitude, double longitude) {
-//        String[] result = new String[9];
-//
-//        for (int latInd = -1; latInd <= 1; latInd++)
-//            for (int lonInd = -1; lonInd <= 1; lonInd++) {
-//                result[(latInd + 1) * 3 + (lonInd + 1)] = getIndex(latitude + ((double) latInd), longitude + ((double) lonInd));
-//            }
-//
-//        return result;
-//    }
-
     /**
      * getNeighbourIndexes returns all compound index of the neighbour for the given location bases on the level.
      * level == 1: is special case return centre node and 8 neighbour square.
