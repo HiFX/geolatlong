@@ -4,7 +4,7 @@
   <groupId>com.hifx.mapper</groupId>
   <artifactId>geolatlong</artifactId>
   <name>geolatlong</name>
-  <version>0.8</version>
+  <version>0.82</version>
   <url>http://maven.apache.org</url>
   <build>
     <plugins>

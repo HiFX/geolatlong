@@ -3,10 +3,10 @@
   <groupId>com.hifx.mapper</groupId>
   <artifactId>geolatlong</artifactId>
   <versioning>
-    <release>0.8</release>
+    <release>0.82</release>
     <versions>
-      <version>0.8</version>
+      <version>0.82</version>
     </versions>
-    <lastUpdated>20170417061752</lastUpdated>
+    <lastUpdated>20170417070957</lastUpdated>
   </versioning>
 </metadata>
