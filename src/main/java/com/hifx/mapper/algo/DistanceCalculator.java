@@ -70,9 +70,8 @@ public abstract class DistanceCalculator {
         int resultInd = 0;
         int additionalIncr = 0;
         for (int latInd = (-1 * level); latInd <= level; latInd++) {
-
             for (int lonInd = (-1 * level); lonInd <= level; lonInd = lonInd + 1 + additionalIncr) {
-                result[resultInd] = getIndex(latitude + ((double) latInd), longitude + ((double) lonInd));
+                result[resultInd] = getIndex((int)latitude + latInd, (int)longitude + lonInd);
                 resultInd++;
             }
             if (latInd == (level - 1)) {

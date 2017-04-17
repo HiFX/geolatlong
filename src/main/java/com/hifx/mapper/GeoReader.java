@@ -62,7 +62,7 @@ public class GeoReader {
 
     //lookup performs the lookup on the hashmap for lat+long if there is no cache involved
     public Location lookup(double latitude, double longitude) {
-        if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > -180){
+        if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180){
             return Location.getUnknown();
         }
         Location result = null;
